@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createIssueSchmea } from "@/app/validationSchemas";
 import { z } from "zod";
 import ErrorMessage from "@/app/components/ErrorMessage";
+import Spinner from "@/app/components/Spinner";
 
 type IssueForm = z.infer<typeof createIssueSchmea>;
 
@@ -20,10 +21,20 @@ const NewIssuePage = () => {
     register,
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting, isValid },
   } = useForm<IssueForm>({
     resolver: zodResolver(createIssueSchmea),
   });
+
+  const onSubmit = async (data: IssueForm) => {
+    try {
+      await axios.post("/api/issues", data);
+      router.push("/issues");
+    } catch (error) {
+      setError("An unexpected Error occured");
+    }
+  }
+
   return (
     <div className="max-w-xl">
       {error && (
@@ -32,22 +43,13 @@ const NewIssuePage = () => {
         </Callout.Root>
       )}
       <form
-        onSubmit={handleSubmit(async (data) => {
-          try {
-            await axios.post("/api/issues", data);
-            router.push("/issues");
-          } catch (error) {
-            setError("An unexpected Error occured");
-          }
-        })}
+        onSubmit={handleSubmit(onSubmit)}
         className="space-y-3"
       >
         <TextField.Root>
           <TextField.Input placeholder="title..." {...register("title")} />
         </TextField.Root>
-        <ErrorMessage>
-          {errors?.title?.message}
-        </ErrorMessage>
+        <ErrorMessage>{errors?.title?.message}</ErrorMessage>
         <Controller
           name="description"
           control={control}
@@ -55,10 +57,10 @@ const NewIssuePage = () => {
             <SimpleMDE placeholder="description..." {...field} />
           )}
         />
-        <ErrorMessage>
-          {errors?.description?.message}
-        </ErrorMessage>
-        <Button className="cursor-pointer">Submit New issue</Button>
+        <ErrorMessage>{errors?.description?.message}</ErrorMessage>
+        <Button disabled={isSubmitting || !isValid} className="cursor-pointer">
+          Submit New issue {isSubmitting && <Spinner />}
+        </Button>
       </form>
     </div>
   );
