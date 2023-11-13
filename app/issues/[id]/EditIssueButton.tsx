@@ -9,12 +9,10 @@ interface Props{
 
 const EditIssueButton = ({issueId}: Props) => {
   return (
-    <div>
         <Button>
             <BiEdit />
             <Link href={`/issues/${issueId}/edit`}>Edit Issue</Link>
         </Button>
-    </div>
   )
 }
 
