@@ -8,7 +8,7 @@ import { useState } from "react";
 
 const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
   const [error, setError] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);  
   const deleteIssue = async ()=> {
     try {
       setIsDeleting(true);
