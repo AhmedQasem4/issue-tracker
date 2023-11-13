@@ -1,6 +1,6 @@
 "use client";
 import { ErrorMessage, Spinner } from "@/app/components";
-import { createIssueSchmea } from "@/app/validationSchemas";
+import { issueSchema } from "@/app/validationSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Issue } from "@prisma/client";
 import { Button, Callout, TextField } from "@radix-ui/themes";
@@ -12,19 +12,17 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-
-const SimpleMDE = dynamic(() => import('react-simplemde-editor'),{
+const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
   ssr: false,
 });
 
-type IssueFormData = z.infer<typeof createIssueSchmea>;
+type IssueFormData = z.infer<typeof issueSchema>;
 
-interface Props{
+interface Props {
   issue?: Issue;
 }
 
-
-const IssueForm = ({issue}:Props) => {
+const IssueForm = ({ issue }: Props) => {
   const [error, setError] = useState("");
   const router = useRouter();
   const {
@@ -33,7 +31,7 @@ const IssueForm = ({issue}:Props) => {
     handleSubmit,
     formState: { errors, isSubmitting, isValid },
   } = useForm<IssueFormData>({
-    resolver: zodResolver(createIssueSchmea),
+    resolver: zodResolver(issueSchema),
   });
 
   const onSubmit = async (data: IssueFormData) => {
@@ -43,7 +41,7 @@ const IssueForm = ({issue}:Props) => {
     } catch (error) {
       setError("An unexpected Error occured");
     }
-  }
+  };
 
   return (
     <div className="max-w-xl">
@@ -52,12 +50,13 @@ const IssueForm = ({issue}:Props) => {
           <Callout.Text>{error}</Callout.Text>
         </Callout.Root>
       )}
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="space-y-3"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
         <TextField.Root>
-          <TextField.Input placeholder="title..." {...register("title")} defaultValue={issue?.title} />
+          <TextField.Input
+            placeholder="title..."
+            {...register("title")}
+            defaultValue={issue?.title}
+          />
         </TextField.Root>
         <ErrorMessage>{errors?.title?.message}</ErrorMessage>
         <Controller
@@ -65,7 +64,7 @@ const IssueForm = ({issue}:Props) => {
           control={control}
           defaultValue={issue?.description}
           render={({ field }) => (
-            <SimpleMDE placeholder="description..." {...field}/>
+            <SimpleMDE placeholder="description..." {...field} />
           )}
         />
         <ErrorMessage>{errors?.description?.message}</ErrorMessage>
