@@ -4,32 +4,29 @@ import { Select } from "@radix-ui/themes";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import React from "react";
-import {Skeleton} from '@/app/components';
+import { Skeleton } from "@/app/components";
+import toast from "react-hot-toast";
 
+const AssignIssues = ({ issue }: { issue: Issue }) => {
+  const { data: users, error, isLoading } = useUsers();
+  const assignIssue = async (userId: string) => {
+    try {
+      await axios.patch("/api/issues/" + issue.id, {
+        assignedToUserId: userId,
+      });
+    } catch (error) {
+      toast.error("Changes can not be saved");
+    }
+  };
+  if (error) return null;
 
-
-const AssignIssues = ({issue}:{issue: Issue}) => {
-  const { data: users, error, isLoading } = useQuery<User[]>({
-    queryKey: ["users"],
-    queryFn: () => axios.get("/api/users").then((res) => res.data),
-    staleTime: 60 * 1000, // 60s
-    retry: 3,    
-  });
-  if(error) return null;
-
-  if(isLoading) return <Skeleton />
+  if (isLoading) return <Skeleton />;
   return (
-    <Select.Root defaultValue={issue.assignedToUserId || undefined}  onValueChange={(userId)=> {
-      if(userId !== "null")
-        axios.patch("/api/issues/"+ issue.id, {assignedToUserId: userId});
-      else 
-      axios.patch("/api/issues/"+ issue.id, {assignedToUserId: null});
-    }}>
+    <Select.Root onValueChange={assignIssue}>
       <Select.Trigger placeholder="Assign..." />
       <Select.Content>
         <Select.Group>
           <Select.Label>Suggestions</Select.Label>
-          <Select.Item value="null">Unassigned</Select.Item>
           {users?.map((user) => (
             <Select.Item key={user.id} value={user.id}>
               {user.name}
@@ -40,5 +37,11 @@ const AssignIssues = ({issue}:{issue: Issue}) => {
     </Select.Root>
   );
 };
-
+const useUsers = () =>
+  useQuery<User[]>({
+    queryKey: ["users"],
+    queryFn: () => axios.get("/api/users").then((res) => res.data),
+    staleTime: 60 * 1000, // 60s
+    retry: 3,
+  });
 export default AssignIssues;
