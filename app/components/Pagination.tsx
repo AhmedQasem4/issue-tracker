@@ -1,33 +1,71 @@
-import { ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon } from '@radix-ui/react-icons';
-import { Button, Flex, Text } from '@radix-ui/themes';
-import React from 'react'
+'use client';
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  DoubleArrowLeftIcon,
+  DoubleArrowRightIcon,
+} from "@radix-ui/react-icons";
+import { Button, Flex, Text } from "@radix-ui/themes";
+import { useRouter, useSearchParams } from "next/navigation";
+import React from "react";
 
-interface Props{
-    itemCount: number;
-    pageSize: number;
-    currentPage: number;
+interface Props {
+  itemCount: number;
+  pageSize: number;
+  currentPage: number;
 }
 
-const Pagination = ({itemCount, pageSize, currentPage}:Props) => {
-    const pageCount = Math.ceil(itemCount / pageSize);
-    if(pageCount <= 1) return null;
-    return (
+const Pagination = ({ itemCount, pageSize, currentPage }: Props) => {
+  const router = useRouter();
+  const serachParams = useSearchParams();
+
+  const changePage = (page: number) => {
+    const params = new URLSearchParams(serachParams);
+    params.set("page", page.toString());
+    router.push("?" + params.toString());
+  };
+
+  const pageCount = Math.ceil(itemCount / pageSize);
+  if (pageCount <= 1) return null;
+  return (
     <Flex align="center" gap="2">
-        <Text size="2">Page {currentPage} of {pageCount}</Text>
-        <Button disabled={currentPage === 1} color='gray' variant='soft'>
-            <DoubleArrowLeftIcon />
-        </Button>
-        <Button disabled={currentPage === 1} color='gray' variant='soft'>
-            <ChevronLeftIcon />
-        </Button>
-        <Button disabled={currentPage === pageCount} color='gray' variant='soft'>
-            <ChevronRightIcon />
-        </Button>
-        <Button disabled={currentPage === pageCount} color='gray' variant='soft'>
-            <DoubleArrowRightIcon />
-        </Button>
+      <Text size="2">
+        Page {currentPage} of {pageCount}
+      </Text>
+      <Button
+        onClick={() => changePage(1)}
+        disabled={currentPage === 1}
+        color="gray"
+        variant="soft"
+      >
+        <DoubleArrowLeftIcon />
+      </Button>
+      <Button
+        onClick={() => changePage(currentPage - 1)}
+        disabled={currentPage === 1}
+        color="gray"
+        variant="soft"
+      >
+        <ChevronLeftIcon />
+      </Button>
+      <Button
+        onClick={() => changePage(currentPage + 1)}
+        disabled={currentPage === pageCount}
+        color="gray"
+        variant="soft"
+      >
+        <ChevronRightIcon />
+      </Button>
+      <Button
+        onClick={() => changePage(pageCount)}
+        disabled={currentPage === pageCount}
+        color="gray"
+        variant="soft"
+      >
+        <DoubleArrowRightIcon />
+      </Button>
     </Flex>
-  )
-}
+  );
+};
 
-export default Pagination
+export default Pagination;
