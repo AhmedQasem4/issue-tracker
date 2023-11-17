@@ -63,6 +63,6 @@ const columns: { label: string; value: keyof Issue; className?: string }[] = [
     { label: "Date", value: "createdAt", className: "hidden md:table-cell" },
 ];
 
-export const columnsName = columns.map(column => column.className);
+export const columnNames = columns.map(column => column.value);
 
 export default IssueTable

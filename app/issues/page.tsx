@@ -4,10 +4,10 @@ import { Flex } from "@radix-ui/themes";
 import Pagination from "../components/Pagination";
 import NewIssueButton from "./NewIssueButton";
 import IssueStatusFilter from "./_components/IssueStatusFilter";
-import IssueTable, { columnsName } from "./_components/IssueTable";
+import IssueTable, { columnNames } from "./_components/IssueTable";
 
 export interface IssueQuery {
- status: Status,
+  status: Status,
   orderBy: keyof Issue,
   page: string 
 }
@@ -24,15 +24,16 @@ const IssuesPage = async ({ searchParams }: Props) => {
     ? searchParams.status
     : undefined;
   
-  const where= {status};
-    const orderBy = columnsName
+    const where= {status};
+
+    const orderBy = columnNames
     .includes(searchParams.orderBy)
     ? { [searchParams.orderBy]: "asc" }
     : undefined;
 
     const page = parseInt(searchParams.page) || 1;
     const pageSize = 10;
-  
+    
     const issues = await prisma.issue.findMany({
     where,
     orderBy,
