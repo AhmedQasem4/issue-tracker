@@ -1,21 +1,29 @@
 import prisma from "@/prisma/client";
-import { Table } from "@radix-ui/themes";
-import delay from 'delay';
+import { Flex, Table } from "@radix-ui/themes";
+import delay from "delay";
 import { IssueStatusBadge, Link } from "../components";
 import NewIssueButton from "./NewIssueButton";
+import IssueStatusFilter from "./_components/IssueStatusFilter";
 
 const IssuesPage = async () => {
   await delay(2000);
   const issues = await prisma.issue.findMany();
   return (
     <div>
-      <NewIssueButton />
+      <Flex justify="between">
+        <IssueStatusFilter />
+        <NewIssueButton />
+      </Flex>
       <Table.Root variant="surface">
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeaderCell>Issue</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="hidden md:table-cell">Status</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="hidden md:table-cell">Date</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="hidden md:table-cell">
+              Status
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="hidden md:table-cell">
+              Date
+            </Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -23,14 +31,16 @@ const IssuesPage = async () => {
             <Table.Row key={issue.id}>
               <Table.Cell>
                 <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
-              <div className="block md:hidden">
-                <IssueStatusBadge status={issue.status}/>
-              </div>
+                <div className="block md:hidden">
+                  <IssueStatusBadge status={issue.status} />
+                </div>
               </Table.Cell>
               <Table.Cell className="hidden md:table-cell">
-              <IssueStatusBadge status={issue.status}/>
+                <IssueStatusBadge status={issue.status} />
               </Table.Cell>
-              <Table.Cell className="hidden md:table-cell">{issue.createdAt.toDateString()}</Table.Cell>
+              <Table.Cell className="hidden md:table-cell">
+                {issue.createdAt.toDateString()}
+              </Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
@@ -39,6 +49,6 @@ const IssuesPage = async () => {
   );
 };
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default IssuesPage;
