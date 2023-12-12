@@ -5,9 +5,9 @@ import EditIssueButton from "./EditIssueButton";
 import IssueDetails from "./IssueDetails";
 import DeleteIssueButton from "../_components/DeleteIssueButton";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import AssignIssues from "../_components/AssignIssues";
 import {cache} from 'react';
+import authOptions from "@/app/api/auth/authOptions";
 interface Props {
   params: { id: string };
 }
